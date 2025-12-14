@@ -19,6 +19,13 @@ cleanup() {
 }
 trap cleanup SIGINT SIGTERM EXIT
 
+# Load NVM if available (to fix legacy node v12 issues)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+# Attempt to use the latest version
+nvm use default 2>/dev/null || nvm use node 2>/dev/null || echo "Using system node: $(node -v)"
+
 # ----------------------------------------------------------------
 # 1. Backend Setup & Run
 # ----------------------------------------------------------------
