@@ -26,6 +26,13 @@ export default function HomePage() {
     const classes = classesData?.data || []
     const history = historyData?.data || []
 
+    console.log('HomePage Render:', {
+        loadingClasses,
+        classesCount: classes.length,
+        historyCount: history.length,
+        user
+    })
+
     if (loadingClasses) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -81,7 +88,7 @@ export default function HomePage() {
                                     ) : (
                                         <XCircle className="w-5 h-5 text-red-500" />
                                     )}
-                                    <span className="font-semibold">{attempt.score?.toFixed(0)}%</span>
+                                    <span className="font-semibold">{Number(attempt.score).toFixed(0)}%</span>
                                 </div>
                             </div>
                         ))}
@@ -120,8 +127,8 @@ function ClassCard({ classInfo, onQuizSelect }) {
                             onClick={() => quiz.is_available && onQuizSelect(quiz.id)}
                             disabled={!quiz.is_available}
                             className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${quiz.is_available
-                                    ? 'bg-white active:scale-[0.98]'
-                                    : 'bg-gray-100 opacity-60'
+                                ? 'bg-white active:scale-[0.98]'
+                                : 'bg-gray-100 opacity-60'
                                 }`}
                         >
                             <div className="text-left">

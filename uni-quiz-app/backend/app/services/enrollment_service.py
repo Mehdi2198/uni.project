@@ -119,8 +119,10 @@ class EnrollmentService:
         # Generate link if not exists
         if not target_class.invite_link:
             # Format: t.me/botname?start=class_CODE
-            bot_username = settings.TELEGRAM_BOT_TOKEN.split(':')[0] if settings.TELEGRAM_BOT_TOKEN else "yourbot"
-            # In production, you'd get the actual bot username from Telegram API
+            bot_username = settings.TELEGRAM_BOT_USERNAME
+            if not bot_username and settings.TELEGRAM_BOT_TOKEN:
+                 bot_username = settings.TELEGRAM_BOT_TOKEN.split(':')[0]
+            
             target_class.invite_link = f"https://t.me/{bot_username}?start={target_class.class_code}"
             self.db.commit()
         

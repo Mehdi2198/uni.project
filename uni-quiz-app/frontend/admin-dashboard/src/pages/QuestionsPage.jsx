@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { questionsApi, classesApi } from '../services/api'
+import { questionsApi, classesApi, filesApi } from '../services/api'
 import { Plus, Search, Filter, Trash2, Edit2, Image, HelpCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function QuestionsPage() {
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [filters, setFilters] = useState({ class_id: '', difficulty: '' })
+    const [imageUrl, setImageUrl] = useState('')
+    const [uploading, setUploading] = useState(false)
     const queryClient = useQueryClient()
 
     const { data: questionsData, isLoading } = useQuery({
@@ -29,6 +31,7 @@ export default function QuestionsPage() {
         onSuccess: () => {
             queryClient.invalidateQueries(['questions'])
             setShowCreateModal(false)
+            setImageUrl('')
             toast.success('Question created!')
         },
         onError: (error) => toast.error(error.response?.data?.detail || 'Failed to create'),
@@ -41,6 +44,22 @@ export default function QuestionsPage() {
             toast.success('Question deleted')
         },
     })
+
+    const handleUpload = async (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+
+        setUploading(true)
+        try {
+            const res = await filesApi.uploadImage(file)
+            setImageUrl(res.data.url)
+            toast.success('Image uploaded')
+        } catch (error) {
+            toast.error('Failed to upload image')
+        } finally {
+            setUploading(false)
+        }
+    }
 
     const handleCreate = (e) => {
         e.preventDefault()
@@ -60,6 +79,7 @@ export default function QuestionsPage() {
             explanation: formData.get('explanation') || null,
             points: parseInt(formData.get('points')) || 1,
             difficulty: formData.get('difficulty'),
+            image_url: imageUrl || null
         })
     }
 
@@ -194,6 +214,31 @@ export default function QuestionsPage() {
                             <div>
                                 <label className="block text-sm font-medium text-dark-700 mb-2">Question *</label>
                                 <textarea name="question_text" required className="input min-h-[80px]" placeholder="Enter your question..." />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-dark-700 mb-2">Image (Optional)</label>
+                                <div className="flex items-center gap-4">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleUpload}
+                                        className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
+                                    />
+                                    {uploading && <span className="text-sm text-dark-500">Uploading...</span>}
+                                </div>
+                                {imageUrl && (
+                                    <div className="mt-2 relative inline-block">
+                                        <img src={imageUrl} alt="Preview" className="h-20 rounded border border-dark-200" />
+                                        <button
+                                            type="button"
+                                            onClick={() => setImageUrl('')}
+                                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 w-5 h-5 flex items-center justify-center text-xs"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">

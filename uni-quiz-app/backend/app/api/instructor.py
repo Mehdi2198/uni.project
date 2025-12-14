@@ -30,7 +30,20 @@ from app.services.quiz_service import QuizService
 from app.utils.excel import create_quiz_results_excel
 from app.config import settings
 
+
+from app.utils.file import save_upload_file
+
 router = APIRouter()
+
+
+@router.post("/upload")
+async def upload_file(
+    file: UploadFile = File(...),
+    current_user: Instructor = Depends(get_current_instructor)
+):
+    """Upload a file (image) and get value URL."""
+    url = save_upload_file(file, sub_dir="images")
+    return {"url": url}
 
 
 # ==================== Profile ====================

@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     
     # Telegram Bot
     TELEGRAM_BOT_TOKEN: str = ""
+    TELEGRAM_BOT_USERNAME: str = ""
     TELEGRAM_WEBAPP_URL: str = ""
     
     # CORS
