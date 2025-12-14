@@ -58,12 +58,12 @@ def create_bot_application() -> Application:
     return application
 
 
-async def run_bot():
+def run_bot():
     """Run the bot using polling (for development)."""
     application = create_bot_application()
     
     logger.info("Starting bot with polling...")
-    await application.run_polling(allowed_updates=Update.ALL_TYPES)
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
 async def setup_webhook(webhook_url: str):
