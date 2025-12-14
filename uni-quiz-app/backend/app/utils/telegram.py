@@ -45,6 +45,15 @@ def validate_telegram_webapp_data(init_data: str) -> dict | None:
         received_hash = parsed_data.pop('hash', None)
         if not received_hash:
             return None
+            
+        # Development bypass
+        if settings.DEBUG and received_hash == "mock_hash_for_dev":
+            user_data_str = parsed_data.get('user')
+            if user_data_str:
+                return json.loads(user_data_str)
+        
+        if not received_hash:
+            return None
         
         # Check auth_date freshness (within 24 hours)
         auth_date_str = parsed_data.get('auth_date', '0')

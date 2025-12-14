@@ -129,9 +129,14 @@ export default function QuizzesPage() {
 
                             <div className="flex items-center gap-2">
                                 <button
-                                    onClick={() => publishMutation.mutate({ id: quiz.id, isPublished: !quiz.is_published })}
+                                    onClick={() => {
+                                        if (!quiz.is_published && quiz.pool_size < quiz.question_count) {
+                                            toast.error(`Add at least ${quiz.question_count} questions to publish`)
+                                            return
+                                        }
+                                        publishMutation.mutate({ id: quiz.id, isPublished: !quiz.is_published })
+                                    }}
                                     className={`btn flex-1 ${quiz.is_published ? 'btn-secondary' : 'btn-success'}`}
-                                    disabled={!quiz.is_published && quiz.pool_size < quiz.question_count}
                                 >
                                     {quiz.is_published ? (
                                         <><EyeOff className="w-4 h-4" /> Unpublish</>

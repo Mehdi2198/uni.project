@@ -47,7 +47,7 @@ alembic upgrade head
 
 # Start FastAPI
 echo "Starting FastAPI server..."
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload &
+uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload &
 BACKEND_PID=$!
 
 # ----------------------------------------------------------------
@@ -97,8 +97,8 @@ cd ../..
 # Summary
 # ----------------------------------------------------------------
 echo -e "\n${BLUE}=== All Services Started ===${NC}"
-echo -e "🚀 Backend API:    ${GREEN}http://localhost:8000${NC}"
-echo -e "📄 API Docs:       ${GREEN}http://localhost:8000/api/docs${NC}"
+echo -e "🚀 Backend API:    ${GREEN}http://localhost:8001${NC}"
+echo -e "📄 API Docs:       ${GREEN}http://localhost:8001/api/docs${NC}"
 echo -e "💻 Admin Panel:    ${GREEN}http://localhost:3000${NC}"
 echo -e "📱 Mini App:       ${GREEN}http://localhost:5173${NC}"
 echo -e "🤖 Telegram Bot:   ${GREEN}Running in background${NC}"

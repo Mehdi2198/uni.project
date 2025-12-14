@@ -11,7 +11,12 @@ export default function QuestionsPage() {
 
     const { data: questionsData, isLoading } = useQuery({
         queryKey: ['questions', filters],
-        queryFn: () => questionsApi.getAll(filters),
+        queryFn: () => {
+            const cleanFilters = Object.fromEntries(
+                Object.entries(filters).filter(([_, v]) => v !== '')
+            );
+            return questionsApi.getAll(cleanFilters);
+        },
     })
 
     const { data: classesData } = useQuery({
@@ -124,7 +129,7 @@ export default function QuestionsPage() {
                                     <p className="font-medium text-dark-900 mb-2">{q.question_text}</p>
                                     <div className="flex flex-wrap gap-2">
                                         <span className={`badge ${q.difficulty === 'easy' ? 'badge-success' :
-                                                q.difficulty === 'medium' ? 'badge-warning' : 'badge-danger'
+                                            q.difficulty === 'medium' ? 'badge-warning' : 'badge-danger'
                                             }`}>
                                             {q.difficulty}
                                         </span>
@@ -148,8 +153,8 @@ export default function QuestionsPage() {
                                         <div
                                             key={opt.id}
                                             className={`px-3 py-2 rounded-lg text-sm ${opt.id === q.correct_answer
-                                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                                                    : 'bg-dark-50 text-dark-700'
+                                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                : 'bg-dark-50 text-dark-700'
                                                 }`}
                                         >
                                             <span className="font-medium">{opt.id.toUpperCase()}.</span> {opt.text}

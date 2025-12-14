@@ -288,7 +288,10 @@ class QuizService:
         attempt.score = Decimal(earned_points / total_points * 100) if total_points > 0 else Decimal(0)
         
         if attempt.started_at:
-            attempt.time_spent_seconds = int((attempt.submitted_at - attempt.started_at).total_seconds())
+            # Ensure consistent timezone awareness
+            started = attempt.started_at.replace(tzinfo=None)
+            submitted = attempt.submitted_at.replace(tzinfo=None)
+            attempt.time_spent_seconds = int((submitted - started).total_seconds())
         
         self.db.commit()
         self.db.refresh(attempt)
@@ -307,6 +310,10 @@ class QuizService:
         results = []
         for attempt in attempts:
             student = attempt.student
+            if not student:
+                 # Should not happen in normal flow, but safety check
+                 continue
+                 
             results.append({
                 'student_name': student.full_name if student else 'Unknown',
                 'telegram_username': student.telegram_username if student else None,

@@ -16,7 +16,7 @@ def get_webapp_keyboard() -> InlineKeyboardMarkup:
     """Create inline keyboard with Mini App button."""
     if not settings.TELEGRAM_WEBAPP_URL:
         return None
-    
+
     keyboard = [[
         InlineKeyboardButton(
             "📝 Open Quiz App",
@@ -129,7 +129,9 @@ async def quiz_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle errors in the bot."""
+    import traceback
     logger.error(f"Exception while handling an update: {context.error}")
+    traceback.print_tb(context.error.__traceback__)
     
     if update and hasattr(update, 'effective_message') and update.effective_message:
         await update.effective_message.reply_text(

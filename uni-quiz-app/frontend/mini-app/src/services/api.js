@@ -14,6 +14,15 @@ api.interceptors.request.use(
         const tg = window.Telegram?.WebApp
         if (tg?.initData) {
             config.headers['X-Telegram-Init-Data'] = tg.initData
+        } else if (import.meta.env.DEV) {
+            // Development mock data
+            const mockUser = encodeURIComponent(JSON.stringify({
+                id: 123456789,
+                first_name: "Test",
+                last_name: "Student",
+                username: "test_student"
+            }));
+            config.headers['X-Telegram-Init-Data'] = `user=${mockUser}&auth_date=${Math.floor(Date.now() / 1000)}&hash=mock_hash_for_dev`
         }
         return config
     },

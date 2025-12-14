@@ -281,7 +281,7 @@ async def list_class_students(
 async def list_questions(
     db: Session = Depends(get_db),
     current_user: Instructor = Depends(get_current_instructor),
-    class_id: Optional[UUID] = None,
+    class_id: Optional[str] = None,
     difficulty: Optional[str] = None,
     question_type: Optional[str] = None,
     skip: int = 0,
@@ -293,9 +293,13 @@ async def list_questions(
         Question.is_active == True
     )
     
-    if class_id:
-        query = query.filter(Question.class_id == class_id)
-    if difficulty:
+    if class_id and class_id.strip():
+        try:
+            query = query.filter(Question.class_id == UUID(class_id))
+        except ValueError:
+            pass # Ignore invalid UUID
+            
+    if difficulty and difficulty.strip():
         query = query.filter(Question.difficulty == difficulty)
     if question_type:
         query = query.filter(Question.question_type == question_type)

@@ -16,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 def get_webapp_keyboard() -> InlineKeyboardMarkup:
-    """Create keyboard with Mini App button."""
     keyboard = [[
         InlineKeyboardButton(
             "📝 Open Quiz App",

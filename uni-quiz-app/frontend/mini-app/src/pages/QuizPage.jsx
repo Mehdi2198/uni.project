@@ -4,6 +4,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { studentApi } from '../services/api'
 import { useTelegram } from '../hooks/useTelegram'
 import { Clock, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 export default function QuizPage() {
     const { quizId } = useParams()
@@ -38,6 +39,10 @@ export default function QuizPage() {
         onSuccess: (data) => {
             hideMainButton()
             navigate(`/result/${startMutation.data?.data?.attempt_id}`, { replace: true })
+        },
+        onError: (error) => {
+            toast.error(error.response?.data?.detail || 'Failed to submit quiz. Please try again.')
+            haptic.notification('error')
         },
     })
 
