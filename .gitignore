@@ -3401,3 +3401,9 @@
 /uni-quiz-app/backend/venv/lib/python3.10/site-packages/six.py
 /uni-quiz-app/backend/venv/lib/python3.10/site-packages/typing_extensions.py
 /uni-quiz-app/backend/venv/pyvenv.cfg
+
+uni-quiz-app/backend/venv/
+
+__pycache__/
+
+node_modules/

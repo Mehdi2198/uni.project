@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Telegram Mini App Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--tg-theme-bg-color, #ffffff);
+    color: var(--tg-theme-text-color, #000000);
+}
+
+/* Mobile-first touch targets */
+button,
+a {
+    min-height: 44px;
+    touch-action: manipulation;
+}
+
+/* Safe area for iOS */
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Telegram-style button */
+.tg-btn {
+    @apply w-full py-3.5 rounded-xl font-semibold text-center transition-all active:scale-[0.98];
+    background-color: var(--tg-theme-button-color, #5288c1);
+    color: var(--tg-theme-button-text-color, #ffffff);
+}
+
+.tg-btn:disabled {
+    opacity: 0.5;
+}
+
+.tg-btn-secondary {
+    @apply w-full py-3.5 rounded-xl font-semibold text-center transition-all active:scale-[0.98];
+    background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+    color: var(--tg-theme-text-color, #000000);
+}
+
+/* Cards */
+.tg-card {
+    @apply rounded-2xl p-4;
+    background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+}
+
+/* Hints */
+.tg-hint {
+    color: var(--tg-theme-hint-color, #999999);
+}
+
+/* Links */
+.tg-link {
+    color: var(--tg-theme-link-color, #2481cc);
+}
+
+/* Answer options */
+.option {
+    @apply w-full p-4 rounded-xl text-left font-medium transition-all active:scale-[0.98];
+    background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+    color: var(--tg-theme-text-color, #000000);
+    border: 2px solid transparent;
+}
+
+.option.selected {
+    border-color: var(--tg-theme-button-color, #5288c1);
+    background-color: var(--tg-theme-button-color, #5288c1);
+    color: var(--tg-theme-button-text-color, #ffffff);
+}
+
+.option.correct {
+    border-color: #22c55e;
+    background-color: #22c55e;
+    color: white;
+}
+
+.option.incorrect {
+    border-color: #ef4444;
+    background-color: #ef4444;
+    color: white;
+}
+
+/* Progress bar */
+.progress-bar {
+    @apply h-1.5 rounded-full overflow-hidden;
+    background-color: var(--tg-theme-secondary-bg-color, #e0e0e0);
+}
+
+.progress-fill {
+    @apply h-full rounded-full transition-all duration-300;
+    background-color: var(--tg-theme-button-color, #5288c1);
+}
+
+/* Loading spinner */
+.spinner {
+    @apply w-8 h-8 border-[3px] border-t-transparent rounded-full animate-spin;
+    border-color: var(--tg-theme-button-color, #5288c1);
+    border-top-color: transparent;
+}
+
+/* Timer */
+.timer {
+    @apply px-3 py-1.5 rounded-full text-sm font-semibold;
+    background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+}
+
+.timer.warning {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.timer.danger {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
