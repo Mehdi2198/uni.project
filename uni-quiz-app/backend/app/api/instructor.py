@@ -461,6 +461,7 @@ async def bulk_import_questions(
     return {"imported": imported, "message": f"Successfully imported {imported} questions"}
 
 
+
 @router.post("/questions/upload-image")
 async def upload_question_image(
     file: UploadFile = File(...),
@@ -486,6 +487,41 @@ async def upload_question_image(
         await f.write(content)
     
     return {"url": f"/uploads/{filename}"}
+
+
+# ==================== AI Generation ====================
+
+from app.schemas.question_ai import QuestionGenerateRequest, AIQuestionResponse
+from app.services.ai_service import ai_service
+
+@router.post("/ai/generate-text", response_model=List[AIQuestionResponse])
+async def generate_questions_from_text(
+    data: QuestionGenerateRequest,
+    current_user: Instructor = Depends(get_current_instructor)
+):
+    """Generate questions from text using AI."""
+    try:
+        return await ai_service.generate_questions_from_text(data.text, data.count)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/ai/generate-image", response_model=List[AIQuestionResponse])
+async def generate_questions_from_image(
+    file: UploadFile = File(...),
+    current_user: Instructor = Depends(get_current_instructor)
+):
+    """Generate questions from image using AI."""
+    allowed_types = ["image/jpeg", "image/png", "image/webp"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid file type. Allowed: {', '.join(allowed_types)}"
+        )
+    
+    try:
+        return await ai_service.generate_questions_from_image(file)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ==================== Quizzes ====================

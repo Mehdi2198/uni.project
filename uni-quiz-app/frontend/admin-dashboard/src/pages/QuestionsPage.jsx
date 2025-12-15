@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { questionsApi, classesApi, filesApi } from '../services/api'
-import { Plus, Search, Filter, Trash2, Edit2, Image, HelpCircle } from 'lucide-react'
+import { Plus, Search, Filter, Trash2, Edit2, Image, HelpCircle, Sparkles } from 'lucide-react'
 import toast from 'react-hot-toast'
+import AIQuestionModal from '../components/AIQuestionModal'
 
 export default function QuestionsPage() {
     const [showCreateModal, setShowCreateModal] = useState(false)
+    const [showAIModal, setShowAIModal] = useState(false)
     const [filters, setFilters] = useState({ class_id: '', difficulty: '' })
     const [imageUrl, setImageUrl] = useState('')
     const [uploading, setUploading] = useState(false)
@@ -83,6 +85,49 @@ export default function QuestionsPage() {
         })
     }
 
+    const handleAIResults = async (generatedQuestions) => {
+        // Transform AI response to API format
+        const formattedQuestions = generatedQuestions.map(q => {
+            // Map options to {id, text}
+            const options = q.options.map((opt, idx) => ({
+                id: String.fromCharCode(97 + idx), // a, b, c, d
+                text: opt
+            }))
+
+            // Find correct answer id
+            let correctId = 'a'
+            const correctIndex = q.options.findIndex(opt =>
+                opt.trim().toLowerCase() === (q.correct_answer || '').trim().toLowerCase()
+            )
+            if (correctIndex !== -1) {
+                correctId = String.fromCharCode(97 + correctIndex)
+            }
+
+            return {
+                question_text: q.question_text,
+                question_type: 'multiple_choice',
+                options: options,
+                correct_answer: correctId,
+                explanation: q.explanation,
+                points: 1,
+                difficulty: 'medium',
+                class_id: filters.class_id || null
+            }
+        })
+
+        try {
+            await questionsApi.bulkImport({
+                class_id: filters.class_id || null,
+                questions: formattedQuestions
+            })
+            queryClient.invalidateQueries(['questions'])
+            toast.success(`Successfully added ${formattedQuestions.length} questions!`)
+        } catch (error) {
+            console.error(error)
+            toast.error('Failed to save generated questions')
+        }
+    }
+
     const questions = questionsData?.data?.questions || []
     const classes = classesData?.data?.classes || []
 
@@ -94,9 +139,14 @@ export default function QuestionsPage() {
                     <h1 className="text-2xl font-bold text-dark-900">Question Bank</h1>
                     <p className="text-dark-500">{questionsData?.data?.total || 0} questions</p>
                 </div>
-                <button onClick={() => setShowCreateModal(true)} className="btn btn-primary">
-                    <Plus className="w-5 h-5" /> Add Question
-                </button>
+                <div className="flex gap-2">
+                    <button onClick={() => setShowAIModal(true)} className="btn bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0 hover:opacity-90 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition shadow-sm">
+                        <Sparkles className="w-5 h-5" /> AI Assistant
+                    </button>
+                    <button onClick={() => setShowCreateModal(true)} className="btn btn-primary">
+                        <Plus className="w-5 h-5" /> Add Question
+                    </button>
+                </div>
             </div>
 
             {/* Filters */}
@@ -136,9 +186,14 @@ export default function QuestionsPage() {
                     <HelpCircle className="w-16 h-16 mx-auto text-dark-300 mb-4" />
                     <h3 className="text-lg font-semibold text-dark-900 mb-2">No questions yet</h3>
                     <p className="text-dark-500 mb-6">Add questions to your question bank</p>
-                    <button onClick={() => setShowCreateModal(true)} className="btn btn-primary">
-                        <Plus className="w-5 h-5" /> Add Question
-                    </button>
+                    <div className="flex justify-center gap-2">
+                        <button onClick={() => setShowAIModal(true)} className="btn bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-0 hover:opacity-90 flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition shadow-sm">
+                            <Sparkles className="w-5 h-5" /> Use AI
+                        </button>
+                        <button onClick={() => setShowCreateModal(true)} className="btn btn-primary">
+                            <Plus className="w-5 h-5" /> Add Question
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <div className="space-y-4">
@@ -282,6 +337,13 @@ export default function QuestionsPage() {
                     </div>
                 </div>
             )}
+
+            <AIQuestionModal
+                isOpen={showAIModal}
+                onClose={() => setShowAIModal(false)}
+                onQuestionsGenerated={handleAIResults}
+                showToast={toast}
+            />
         </div>
     )
 }

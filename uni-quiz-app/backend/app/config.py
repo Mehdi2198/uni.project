@@ -41,6 +41,9 @@ class Settings(BaseSettings):
     
     # Redis (optional)
     REDIS_URL: str = ""
+
+    # AI Service
+    GEMINI_API_KEY: str = ""
     
     class Config:
         env_file = ".env"

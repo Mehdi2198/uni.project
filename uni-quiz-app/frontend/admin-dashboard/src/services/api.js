@@ -83,6 +83,14 @@ export const questionsApi = {
     update: (id, data) => api.put(`/instructor/questions/${id}`, data),
     delete: (id) => api.delete(`/instructor/questions/${id}`),
     bulkImport: (data) => api.post('/instructor/questions/bulk', data),
+    generateFromText: (text, count) => api.post('/instructor/ai/generate-text', { text, count }),
+    generateFromImage: (file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        return api.post('/instructor/ai/generate-image', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        })
+    },
 }
 
 export const quizzesApi = {

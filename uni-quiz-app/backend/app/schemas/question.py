@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, List, Any
 from datetime import datetime
 from uuid import UUID
+from .question_ai import QuestionGenerateRequest, AIQuestionResponse
 
 
 class QuestionOption(BaseModel):
